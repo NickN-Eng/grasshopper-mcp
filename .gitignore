@@ -61,3 +61,7 @@ $RECYCLE.BIN/
 # Project specific
 Grasshopper Tutorial for Beginners.pdf
 grasshopper_mcp_bridge.py
+
+# Local logs and test results
+logs/
+TestResults/

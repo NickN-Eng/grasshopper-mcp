@@ -1,0 +1,23 @@
+# Basic MCP Test Commands
+# Run with: GH_MCP.Tester.Console.exe basic-test.txt
+
+# Clear canvas first
+clear
+
+# Add components
+add "Number Slider" 100 100
+add "Number Slider" 100 200
+add "Addition" 300 150
+add "Panel" 500 150
+
+# List components to get IDs
+list
+
+# Get connections (should be empty)
+connections
+
+# Test search
+search slider
+
+# Test component parameters
+params Addition

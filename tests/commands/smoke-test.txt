@@ -1,0 +1,19 @@
+# Smoke Test - Quick validation that basic operations work
+# This is the minimal test that should always pass
+
+# Clear any existing components
+clear
+
+# Add a simple component
+add "Number Slider" 100 100
+
+# Verify it was added
+assert_count 1
+
+# Get component list
+list
+
+# Export state for AI verification
+export
+
+# Done - this test should complete in < 5 seconds

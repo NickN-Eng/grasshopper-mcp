@@ -6,7 +6,8 @@
       "commandLineArgs": "/netcore /runscript=\"_Grasshopper\"",
       "environmentVariables": {
         "RHINO_PACKAGE_DIRS": "$(ProjectDir)$(OutputPath)\\"
-      }
+      },
+      "nativeDebugging": false
     },
     "Rhino 8 - netfx": {
       "commandName": "Executable",
@@ -14,7 +15,8 @@
       "commandLineArgs": "/netfx /runscript=\"_Grasshopper\"",
       "environmentVariables": {
         "RHINO_PACKAGE_DIRS": "$(ProjectDir)$(OutputPath)\\"
-      }
-    },
+      },
+      "nativeDebugging": false
+    }
   }
 }

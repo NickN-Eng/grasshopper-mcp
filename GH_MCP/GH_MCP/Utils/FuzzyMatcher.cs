@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace GH_MCP.Utils
 {
     /// <summary>
-    /// 提供模糊匹配功能的工具類
+    /// Utility class providing fuzzy matching.
     /// </summary>
     public static class FuzzyMatcher
     {
-        // 元件名稱映射字典，將常用的簡化名稱映射到實際的 Grasshopper 元件名稱
+        // Component name mapping dictionary: maps common shorthand to actual Grasshopper component names.
         private static readonly Dictionary<string, string> ComponentNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            // 平面元件
+            // Plane components.
             { "plane", "XY Plane" },
             { "xyplane", "XY Plane" },
             { "xy", "XY Plane" },
@@ -25,7 +25,7 @@ namespace GH_MCP.Utils
             { "plane3pt", "Plane 3Pt" },
             { "3ptplane", "Plane 3Pt" },
             
-            // 基本幾何元件
+            // Basic geometry components.
             { "box", "Box" },
             { "cube", "Box" },
             { "rectangle", "Rectangle" },
@@ -37,7 +37,7 @@ namespace GH_MCP.Utils
             { "cyl", "Cylinder" },
             { "cone", "Cone" },
             
-            // 參數元件
+            // Parameter components.
             { "slider", "Number Slider" },
             { "numberslider", "Number Slider" },
             { "panel", "Panel" },
@@ -49,15 +49,15 @@ namespace GH_MCP.Utils
             { "crv", "Curve" }
         };
         
-        // 參數名稱映射字典，將常用的簡化參數名稱映射到實際的 Grasshopper 參數名稱
+        // Parameter name mapping dictionary: maps common shorthand to actual Grasshopper parameter names.
         private static readonly Dictionary<string, string> ParameterNameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            // 平面參數
+            // Plane parameters.
             { "plane", "Plane" },
             { "base", "Base" },
             { "origin", "Origin" },
             
-            // 尺寸參數
+            // Size parameters.
             { "radius", "Radius" },
             { "r", "Radius" },
             { "size", "Size" },
@@ -71,19 +71,19 @@ namespace GH_MCP.Utils
             { "y", "Y" },
             { "z", "Z" },
             
-            // 點參數
+            // Point parameters.
             { "point", "Point" },
             { "pt", "Point" },
             { "center", "Center" },
             { "start", "Start" },
             { "end", "End" },
             
-            // 數值參數
+            // Numeric parameters.
             { "number", "Number" },
             { "num", "Number" },
             { "value", "Value" },
             
-            // 輸出參數
+            // Output parameters.
             { "result", "Result" },
             { "output", "Output" },
             { "geometry", "Geometry" },
@@ -92,74 +92,74 @@ namespace GH_MCP.Utils
         };
         
         /// <summary>
-        /// 獲取最接近的元件名稱
+        /// Get the closest component name.
         /// </summary>
-        /// <param name="input">輸入的元件名稱</param>
-        /// <returns>映射後的元件名稱</returns>
+        /// <param name="input">Input component name.</param>
+        /// <returns>Mapped component name.</returns>
         public static string GetClosestComponentName(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;
                 
-            // 嘗試直接映射
+            // Try direct mapping.
             string normalizedInput = input.ToLowerInvariant().Replace(" ", "").Replace("_", "");
             if (ComponentNameMap.TryGetValue(normalizedInput, out string mappedName))
                 return mappedName;
                 
-            // 如果沒有直接映射，返回原始輸入
+            // If there is no direct mapping, return the original input.
             return input;
         }
         
         /// <summary>
-        /// 獲取最接近的參數名稱
+        /// Get the closest parameter name.
         /// </summary>
-        /// <param name="input">輸入的參數名稱</param>
-        /// <returns>映射後的參數名稱</returns>
+        /// <param name="input">Input parameter name.</param>
+        /// <returns>Mapped parameter name.</returns>
         public static string GetClosestParameterName(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return input;
                 
-            // 嘗試直接映射
+            // Try direct mapping.
             string normalizedInput = input.ToLowerInvariant().Replace(" ", "").Replace("_", "");
             if (ParameterNameMap.TryGetValue(normalizedInput, out string mappedName))
                 return mappedName;
                 
-            // 如果沒有直接映射，返回原始輸入
+            // If there is no direct mapping, return the original input.
             return input;
         }
         
         /// <summary>
-        /// 從列表中找到最接近的字符串
+        /// Find the closest string from a list.
         /// </summary>
-        /// <param name="input">輸入字符串</param>
-        /// <param name="candidates">候選字符串列表</param>
-        /// <returns>最接近的字符串</returns>
+        /// <param name="input">Input string.</param>
+        /// <param name="candidates">Candidate list.</param>
+        /// <returns>Closest string.</returns>
         public static string FindClosestMatch(string input, IEnumerable<string> candidates)
         {
             if (string.IsNullOrWhiteSpace(input) || candidates == null || !candidates.Any())
                 return input;
                 
-            // 首先嘗試精確匹配
+            // First try exact match.
             var exactMatch = candidates.FirstOrDefault(c => string.Equals(c, input, StringComparison.OrdinalIgnoreCase));
             if (exactMatch != null)
                 return exactMatch;
                 
-            // 嘗試包含匹配
+            // Try contains match.
             var containsMatches = candidates.Where(c => c.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
             if (containsMatches.Count == 1)
                 return containsMatches[0];
                 
-            // 嘗試前綴匹配
+            // Try prefix match.
             var prefixMatches = candidates.Where(c => c.StartsWith(input, StringComparison.OrdinalIgnoreCase)).ToList();
             if (prefixMatches.Count == 1)
                 return prefixMatches[0];
                 
-            // 如果有多個匹配，返回最短的一個
+            // If multiple matches, return the shortest one.
             if (containsMatches.Any())
                 return containsMatches.OrderBy(c => c.Length).First();
                 
-            // 如果沒有匹配，返回原始輸入
+            // If there is no match, return the original input.
             return input;
         }
     }

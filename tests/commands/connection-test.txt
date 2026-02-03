@@ -1,0 +1,28 @@
+# Connection Test - Verify component wiring works correctly
+# Tests the most critical feature: connecting components
+
+clear
+
+# Create a simple math graph: Slider -> Addition -> Panel
+add "Number Slider" 100 100
+add "Number Slider" 100 200
+add "Addition" 300 150
+add "Panel" 500 150
+
+# Verify all components were added
+assert_count 4
+
+# Get component IDs
+list
+
+# Note: In actual test execution, the tester would need to:
+# 1. Parse the list output to get component IDs
+# 2. Use those IDs to wire components
+# For now this is a placeholder showing the test intent
+
+# For AI: You can extend this by:
+# 1. Using the console tester's scripting capabilities
+# 2. Or create a more sophisticated test runner that parses output
+# 3. Or use the McpTestRunner.cs which does this programmatically
+
+connections

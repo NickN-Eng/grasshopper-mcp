@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-# 讀取 README.md 作為長描述
+# Read README.md as the long description.
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 

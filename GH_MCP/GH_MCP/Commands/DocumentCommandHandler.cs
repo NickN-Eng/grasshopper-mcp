@@ -10,33 +10,33 @@ using System.Threading;
 namespace GrasshopperMCP.Commands
 {
     /// <summary>
-    /// 處理文檔相關命令的處理器
+    /// Handler for document-related commands.
     /// </summary>
     public static class DocumentCommandHandler
     {
         /// <summary>
-        /// 獲取文檔信息
+        /// Get document information.
         /// </summary>
-        /// <param name="command">命令</param>
-        /// <returns>文檔信息</returns>
+        /// <param name="command">Command.</param>
+        /// <returns>Document information.</returns>
         public static object GetDocumentInfo(Command command)
         {
             object result = null;
             Exception exception = null;
             
-            // 在 UI 線程上執行
+            // Execute on the UI thread.
             RhinoApp.InvokeOnUiThread(new Action(() =>
             {
                 try
                 {
-                    // 獲取 Grasshopper 文檔
+                    // Get the Grasshopper document.
                     var doc = Grasshopper.Instances.ActiveCanvas?.Document;
                     if (doc == null)
                     {
                         throw new InvalidOperationException("No active Grasshopper document");
                     }
                     
-                    // 收集組件信息
+                    // Collect component information.
                     var components = new List<object>();
                     foreach (var obj in doc.Objects)
                     {
@@ -50,7 +50,7 @@ namespace GrasshopperMCP.Commands
                         components.Add(componentInfo);
                     }
                     
-                    // 收集文檔信息
+                    // Collect document information.
                     var docInfo = new Dictionary<string, object>
                     {
                         { "name", doc.DisplayName },
@@ -68,13 +68,13 @@ namespace GrasshopperMCP.Commands
                 }
             }));
             
-            // 等待 UI 線程操作完成
+            // Wait for the UI thread operation to complete.
             while (result == null && exception == null)
             {
                 Thread.Sleep(10);
             }
             
-            // 如果有異常，拋出
+            // If there is an exception, throw it.
             if (exception != null)
             {
                 throw exception;
@@ -84,63 +84,63 @@ namespace GrasshopperMCP.Commands
         }
         
         /// <summary>
-        /// 清空文檔
+        /// Clear the document.
         /// </summary>
-        /// <param name="command">命令</param>
-        /// <returns>操作結果</returns>
+        /// <param name="command">Command.</param>
+        /// <returns>Operation result.</returns>
         public static object ClearDocument(Command command)
         {
             object result = null;
             Exception exception = null;
             
-            // 在 UI 線程上執行
+            // Execute on the UI thread.
             RhinoApp.InvokeOnUiThread(new Action(() =>
             {
                 try
                 {
-                    // 獲取 Grasshopper 文檔
+                    // Get the Grasshopper document.
                     var doc = Grasshopper.Instances.ActiveCanvas?.Document;
                     if (doc == null)
                     {
                         throw new InvalidOperationException("No active Grasshopper document");
                     }
                     
-                    // 創建一個新的文檔對象列表，避免在遍歷時修改集合
+                    // Create a new list of document objects to avoid modifying during iteration.
                     var objectsToRemove = doc.Objects.ToList();
                     
-                    // 過濾掉必要的元件（保留那些用於與 Claude Desktop 通信的元件）
-                    // 這裡我們可以通過 GUID、名稱或類型來識別必要的元件
+                    // Filter essential components (keep those used to communicate with Claude Desktop).
+                    // Identify essential components by GUID, name, or type.
                     var essentialComponents = objectsToRemove.Where(obj => 
-                        // 檢查元件的名稱是否包含特定關鍵字
+                        // Check whether the component name contains specific keywords.
                         obj.NickName.Contains("MCP") || 
                         obj.NickName.Contains("Claude") ||
-                        // 或者檢查元件的類型
+                        // Or check the component type.
                         obj.GetType().Name.Contains("GH_MCP") ||
-                        // 或者檢查元件的描述
+                        // Or check the component description.
                         obj.Description.Contains("Machine Control Protocol") ||
-                        // 保留 toggle 元件
+                        // Keep toggle components.
                         obj.GetType().Name.Contains("GH_BooleanToggle") ||
-                        // 保留 panel 元件 (用於顯示 status)
+                        // Keep panel components (used to display status).
                         obj.GetType().Name.Contains("GH_Panel") ||
-                        // 額外檢查元件名稱
+                        // Additional name checks.
                         obj.NickName.Contains("Toggle") ||
                         obj.NickName.Contains("Status") ||
                         obj.NickName.Contains("Panel")
                     ).ToList();
                     
-                    // 從要刪除的列表中移除必要的元件
+                    // Remove essential components from the removal list.
                     foreach (var component in essentialComponents)
                     {
                         objectsToRemove.Remove(component);
                     }
                     
-                    // 清空文檔（只刪除非必要的元件）
+                    // Clear the document (remove only non-essential components).
                     doc.RemoveObjects(objectsToRemove, false);
                     
-                    // 刷新畫布
+                    // Refresh canvas.
                     doc.NewSolution(false);
                     
-                    // 返回操作結果
+                    // Return operation result.
                     result = new
                     {
                         success = true,
@@ -154,13 +154,13 @@ namespace GrasshopperMCP.Commands
                 }
             }));
             
-            // 等待 UI 線程操作完成
+            // Wait for the UI thread operation to complete.
             while (result == null && exception == null)
             {
                 Thread.Sleep(10);
             }
             
-            // 如果有異常，拋出
+            // If there is an exception, throw it.
             if (exception != null)
             {
                 throw exception;
@@ -170,10 +170,10 @@ namespace GrasshopperMCP.Commands
         }
         
         /// <summary>
-        /// 保存文檔
+        /// Save the document.
         /// </summary>
-        /// <param name="command">命令</param>
-        /// <returns>操作結果</returns>
+        /// <param name="command">Command.</param>
+        /// <returns>Operation result.</returns>
         public static object SaveDocument(Command command)
         {
             string path = command.GetParameter<string>("path");
@@ -182,7 +182,7 @@ namespace GrasshopperMCP.Commands
                 throw new ArgumentException("Save path is required");
             }
             
-            // 返回一個錯誤信息，表示該功能暫時不可用
+            // Return an error message; this feature is temporarily unavailable.
             return new
             {
                 success = false,
@@ -191,10 +191,10 @@ namespace GrasshopperMCP.Commands
         }
         
         /// <summary>
-        /// 加載文檔
+        /// Load the document.
         /// </summary>
-        /// <param name="command">命令</param>
-        /// <returns>操作結果</returns>
+        /// <param name="command">Command.</param>
+        /// <returns>Operation result.</returns>
         public static object LoadDocument(Command command)
         {
             string path = command.GetParameter<string>("path");
@@ -203,7 +203,7 @@ namespace GrasshopperMCP.Commands
                 throw new ArgumentException("Load path is required");
             }
             
-            // 返回一個錯誤信息，表示該功能暫時不可用
+            // Return an error message; this feature is temporarily unavailable.
             return new
             {
                 success = false,
