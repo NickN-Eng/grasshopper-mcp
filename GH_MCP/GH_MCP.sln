@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP_Bridge", "GH_MCP_Bri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP.Client", "GH_MCP.Client\GH_MCP.Client.csproj", "{25687F76-FEF5-415D-B6CA-ADFA225DAB16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP.Tester.Console", "GH_MCP.Tester.Console\GH_MCP.Tester.Console.csproj", "{72EE6E3A-F37C-4EBF-9DE8-9D0638A74152}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP.Tester.Console", "..\testing\testers\Console\GH_MCP.Tester.Console.csproj", "{72EE6E3A-F37C-4EBF-9DE8-9D0638A74152}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP.Tester.Wpf", "GH_MCP.Tester.Wpf\GH_MCP.Tester.Wpf.csproj", "{6876B52E-9216-48E1-8270-20492FD05460}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GH_MCP.Tester.Wpf", "..\testing\testers\Wpf\GH_MCP.Tester.Wpf.csproj", "{6876B52E-9216-48E1-8270-20492FD05460}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

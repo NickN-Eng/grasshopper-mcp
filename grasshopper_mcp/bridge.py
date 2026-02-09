@@ -476,6 +476,94 @@ def validate_connection(source_id: str, target_id: str, source_param: str = None
     
     return send_to_grasshopper("validate_connection", params)
 
+@server.tool("get_script_components")
+def get_script_components():
+    """
+    Get all C# script components in the active Grasshopper document
+
+    Returns:
+        List of script components with ID, name, position, and basic info
+    """
+    return send_to_grasshopper("get_script_components")
+
+@server.tool("get_script_code")
+def get_script_code(component_id: str):
+    """
+    Get the source code from a C# script component
+
+    Args:
+        component_id: GUID of the script component
+
+    Returns:
+        The full source code, inputs, and outputs of the script component
+    """
+    params = {"component_id": component_id}
+    return send_to_grasshopper("get_script_code", params)
+
+@server.tool("set_script_code")
+def set_script_code(component_id: str, code: str, compile: bool = False):
+    """
+    Set new source code on a C# script component and optionally compile it
+
+    Args:
+        component_id: GUID of the script component
+        code: New source code to set
+        compile: Whether to compile after setting (default: False)
+
+    Returns:
+        Success status, any compilation errors
+    """
+    params = {
+        "component_id": component_id,
+        "code": code,
+        "compile": compile
+    }
+    return send_to_grasshopper("set_script_code", params)
+
+@server.tool("compile_script")
+def compile_script(component_id: str):
+    """
+    Trigger compilation of a C# script component
+
+    Args:
+        component_id: GUID of the script component
+
+    Returns:
+        Success status and any compilation errors
+    """
+    params = {"component_id": component_id}
+    return send_to_grasshopper("compile_script", params)
+
+@server.tool("investigate_script_component")
+def investigate_script_component(component_id: str):
+    """
+    Investigate script component structure via reflection to discover available properties and methods.
+    This is a diagnostic tool that returns a detailed report about the component's structure.
+
+    Args:
+        component_id: GUID of the script component to investigate
+
+    Returns:
+        Investigation report with all properties, methods, and nested objects discovered
+    """
+    params = {"component_id": component_id}
+    return send_to_grasshopper("investigate_script_component", params)
+
+@server.tool("test_script_compilation")
+def test_script_compilation(component_id: str):
+    """
+    Comprehensive testing and investigation of script compilation.
+    Logs detailed information to temp files for debugging.
+
+    Args:
+        component_id: GUID of the script component
+
+    Returns:
+        Success status, log file paths, and any errors
+    """
+    params = {"component_id": component_id}
+    return send_to_grasshopper("test_script_compilation", params)
+
 # Register MCP resources.
 @server.resource("grasshopper://status")
 def get_grasshopper_status():

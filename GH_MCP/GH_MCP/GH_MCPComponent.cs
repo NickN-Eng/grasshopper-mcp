@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using GH_MCP.Commands;
 using GrasshopperMCP.Models;
 using Grasshopper.Kernel;
@@ -98,7 +99,88 @@ namespace GrasshopperMCP
         /// Expose icon.
         /// </summary>
         protected override Bitmap Icon => null;
-        
+
+        /// <summary>
+        /// Add debug menu items to the component's right-click context menu.
+        /// </summary>
+        protected override void AppendAdditionalComponentMenuItems(ToolStripDropDown menu)
+        {
+            base.AppendAdditionalComponentMenuItems(menu);
+
+            Menu_AppendSeparator(menu);
+
+            // Add "Debug: Dump Canvas" menu item
+            Menu_AppendItem(menu, "Debug: Dump Canvas to JSON", DumpCanvasToFile);
+        }
+
+        /// <summary>
+        /// Dumps all canvas components to a JSON file with a save dialog.
+        /// </summary>
+        private void DumpCanvasToFile(object sender, EventArgs e)
+        {
+            try
+            {
+                // Create save file dialog
+                using (var saveDialog = new SaveFileDialog())
+                {
+                    saveDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                    saveDialog.DefaultExt = "json";
+                    saveDialog.FileName = $"grasshopper-canvas-dump-{DateTime.Now:yyyyMMdd-HHmmss}.json";
+
+                    // Set default directory to the GHA location
+                    try
+                    {
+                        saveDialog.InitialDirectory = GH_MCPInfo.GhaFolder;
+                    }
+                    catch
+                    {
+                        // If GHA folder is not accessible, use temp folder
+                        saveDialog.InitialDirectory = Path.GetTempPath();
+                    }
+
+                    if (saveDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Execute the dump_canvas command
+                        var command = new Command("dump_canvas");
+                        var response = GrasshopperCommandRegistry.ExecuteCommand(command);
+
+                        if (response.Success && response.Data != null)
+                        {
+                            // Serialize and save to file
+                            var json = JsonConvert.SerializeObject(response.Data, Formatting.Indented);
+                            File.WriteAllText(saveDialog.FileName, json);
+
+                            RhinoApp.WriteLine($"GH_MCP: Canvas dump saved to: {saveDialog.FileName}");
+                            MessageBox.Show(
+                                $"Canvas dump saved successfully!\n\nLocation: {saveDialog.FileName}",
+                                "Debug: Dump Canvas",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            var errorMsg = response.Error ?? "Unknown error";
+                            RhinoApp.WriteLine($"GH_MCP: Failed to dump canvas: {errorMsg}");
+                            MessageBox.Show(
+                                $"Failed to dump canvas:\n{errorMsg}",
+                                "Debug: Dump Canvas",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                RhinoApp.WriteLine($"GH_MCP: Error in DumpCanvasToFile: {ex.Message}");
+                MessageBox.Show(
+                    $"Error dumping canvas:\n{ex.Message}",
+                    "Debug: Dump Canvas",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
+
         /// <summary>
         /// Last received command.
         /// </summary>

@@ -20,7 +20,7 @@ namespace GH_MCP.Utils
         /// </summary>
         /// <param name="component">The C# script component to investigate</param>
         /// <returns>Investigation report as a string</returns>
-        public string InvestigateComponent(GH_Component component)
+        public string InvestigateComponent(object component)
         {
             _log.Clear();
             _log.AppendLine("=== C# Script Component Investigation ===");
@@ -32,31 +32,50 @@ namespace GH_MCP.Utils
             _log.AppendLine("--- Component Properties ---");
             ExploreProperties(component, component.GetType());
 
-            // Step 2: Try to get Context property
-            var context = GetPropertyValue(component, "Context");
-            if (context != null)
+            // Step 2: Find methods on component itself
+            _log.AppendLine("\n--- Component Methods (Compilation-Related) ---");
+            FindCompilationMethods(component);
+
+            // Step 3: Try common property names that might contain script data
+            var propertyNames = new[] { "Context", "CodeEditor", "ScriptInstance", "Document", "Code", "Script", "Editor" };
+
+            foreach (var propName in propertyNames)
             {
-                _log.AppendLine("\n--- Context Object Found ---");
-                _log.AppendLine($"Context Type: {context.GetType().FullName}");
-                _log.AppendLine($"Assembly: {context.GetType().Assembly.GetName().Name}");
-                _log.AppendLine();
-
-                // Step 3: Explore Context properties
-                _log.AppendLine("--- Context Properties ---");
-                ExploreProperties(context, context.GetType());
-
-                // Step 4: Find compilation-related methods
-                _log.AppendLine("\n--- Potential Compilation Methods ---");
-                FindCompilationMethods(context);
-
-                // Step 5: Explore Script property if it exists
-                var script = GetPropertyValue(context, "Script");
-                if (script != null)
+                var propValue = GetPropertyValue(component, propName);
+                if (propValue != null)
                 {
-                    _log.AppendLine("\n--- Script Object Found ---");
-                    _log.AppendLine($"Script Type: {script.GetType().FullName}");
-                    ExploreProperties(script, script.GetType());
-                    FindCompilationMethods(script);
+                    _log.AppendLine($"\n--- {propName} Object Found ---");
+                    _log.AppendLine($"{propName} Type: {propValue.GetType().FullName}");
+                    _log.AppendLine($"Assembly: {propValue.GetType().Assembly.GetName().Name}");
+                    _log.AppendLine();
+
+                    _log.AppendLine($"--- {propName} Properties ---");
+                    ExploreProperties(propValue, propValue.GetType());
+
+                    _log.AppendLine($"\n--- {propName} Compilation Methods ---");
+                    FindCompilationMethods(propValue);
+
+                    // Check for nested Script/Text properties
+                    var script = GetPropertyValue(propValue, "Script");
+                    if (script != null)
+                    {
+                        _log.AppendLine($"\n--- {propName}.Script Object Found ---");
+                        _log.AppendLine($"Script Type: {script.GetType().FullName}");
+                        ExploreProperties(script, script.GetType());
+                        FindCompilationMethods(script);
+                    }
+
+                    var text = GetPropertyValue(propValue, "Text");
+                    if (text != null)
+                    {
+                        _log.AppendLine($"\n--- {propName}.Text Property ---");
+                        _log.AppendLine($"Text Type: {text.GetType().FullName}");
+                        if (text is string textStr)
+                        {
+                            _log.AppendLine($"Text Length: {textStr.Length} chars");
+                            _log.AppendLine($"Text Preview: {(textStr.Length > 100 ? textStr.Substring(0, 100) + "..." : textStr)}");
+                        }
+                    }
                 }
             }
 
@@ -124,7 +143,7 @@ namespace GH_MCP.Utils
         /// <summary>
         /// Attempts to call various compilation methods discovered on a component.
         /// </summary>
-        public CompilationTestResult TestCompilationMethods(GH_Component component)
+        public CompilationTestResult TestCompilationMethods(object component)
         {
             var result = new CompilationTestResult();
             _log.Clear();

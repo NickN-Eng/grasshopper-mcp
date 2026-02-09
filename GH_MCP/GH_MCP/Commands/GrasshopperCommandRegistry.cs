@@ -37,6 +37,12 @@ namespace GH_MCP.Commands
             // Register verification commands (for AI testing).
             RegisterVerificationCommands();
 
+            // Register script component commands.
+            RegisterScriptComponentCommands();
+
+            // Register debug commands.
+            RegisterDebugCommands();
+
             RhinoApp.WriteLine("GH_MCP: Command registry initialized.");
         }
 
@@ -126,6 +132,46 @@ namespace GH_MCP.Commands
             RegisterCommand("get_document_hash", VerificationCommandHandler.GetDocumentHash);
 
             RhinoApp.WriteLine("GH_MCP: Verification commands registered.");
+        }
+
+        /// <summary>
+        /// Register script component commands.
+        /// </summary>
+        private static void RegisterScriptComponentCommands()
+        {
+            // Get all script components in document.
+            RegisterCommand("get_script_components", ScriptComponentCommandHandler.GetScriptComponents);
+
+            // Get script code from a component.
+            RegisterCommand("get_script_code", ScriptComponentCommandHandler.GetScriptCode);
+
+            // Set script code on a component.
+            RegisterCommand("set_script_code", ScriptComponentCommandHandler.SetScriptCode);
+
+            // Compile a script component.
+            RegisterCommand("compile_script", ScriptComponentCommandHandler.CompileScript);
+
+            // Investigate script component structure (debugging).
+            RegisterCommand("investigate_script_component", ScriptComponentCommandHandler.InvestigateScriptComponent);
+
+            // Test script compilation (for debugging).
+            RegisterCommand("test_script_compilation", ScriptTestCommandHandler.TestScriptCompilation);
+
+            RhinoApp.WriteLine("GH_MCP: Script component commands registered.");
+        }
+
+        /// <summary>
+        /// Register debug commands for investigating canvas state.
+        /// </summary>
+        private static void RegisterDebugCommands()
+        {
+            // Dump all components on canvas to JSON file.
+            RegisterCommand("dump_canvas", DebugCommandHandler.DumpCanvasComponents);
+
+            // Inspect a specific component's type information.
+            RegisterCommand("inspect_component", DebugCommandHandler.InspectComponent);
+
+            RhinoApp.WriteLine("GH_MCP: Debug commands registered.");
         }
 
         /// <summary>

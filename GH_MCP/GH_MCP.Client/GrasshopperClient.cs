@@ -343,6 +343,54 @@ namespace GH_MCP.Client
 
         #endregion
 
+        #region Script Component Methods
+
+        /// <summary>
+        /// Gets all C# script components in the active document
+        /// </summary>
+        public Task<GrasshopperResponse> GetScriptComponentsAsync(CancellationToken cancellationToken = default)
+        {
+            return SendCommandAsync(GrasshopperCommand.GetScriptComponents(), cancellationToken);
+        }
+
+        /// <summary>
+        /// Gets the source code from a script component
+        /// </summary>
+        public Task<GrasshopperResponse> GetScriptCodeAsync(string componentId, CancellationToken cancellationToken = default)
+        {
+            return SendCommandAsync(GrasshopperCommand.GetScriptCode(componentId), cancellationToken);
+        }
+
+        /// <summary>
+        /// Sets new source code on a script component and optionally compiles it
+        /// </summary>
+        public Task<GrasshopperResponse> SetScriptCodeAsync(
+            string componentId,
+            string code,
+            bool compile = false,
+            CancellationToken cancellationToken = default)
+        {
+            return SendCommandAsync(GrasshopperCommand.SetScriptCode(componentId, code, compile), cancellationToken);
+        }
+
+        /// <summary>
+        /// Triggers compilation of a script component
+        /// </summary>
+        public Task<GrasshopperResponse> CompileScriptAsync(string componentId, CancellationToken cancellationToken = default)
+        {
+            return SendCommandAsync(GrasshopperCommand.CompileScript(componentId), cancellationToken);
+        }
+
+        /// <summary>
+        /// Comprehensive testing and investigation of script compilation
+        /// </summary>
+        public Task<GrasshopperResponse> TestScriptCompilationAsync(string componentId, CancellationToken cancellationToken = default)
+        {
+            return SendCommandAsync(GrasshopperCommand.TestScriptCompilation(componentId), cancellationToken);
+        }
+
+        #endregion
+
         public void Dispose()
         {
             if (!_disposed)

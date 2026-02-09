@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.IO;
 using Grasshopper;
 using Grasshopper.Kernel;
 
@@ -25,5 +26,15 @@ namespace GrasshopperMCP
 
     //Return a string representing the version.  This returns the same version as the assembly.
     public override string AssemblyVersion => GetType().Assembly.GetName().Version.ToString();
+
+    /// <summary>
+    /// Gets the full path to the GH_MCP.gha file.
+    /// </summary>
+    public static string GhaPath => typeof(GH_MCPInfo).Assembly.Location;
+
+    /// <summary>
+    /// Gets the folder containing the GH_MCP.gha file.
+    /// </summary>
+    public static string GhaFolder => Path.GetDirectoryName(GhaPath);
   }
 }

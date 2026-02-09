@@ -1,0 +1,156 @@
+<Window x:Class="GH_MCP.Tester.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="GH_MCP Tester" Height="700" Width="1100"
+        WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Margin" Value="2"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Padding" Value="4"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Connection Bar -->
+        <Border Grid.Row="0" Background="#F0F0F0" CornerRadius="4" Padding="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Host:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <TextBox x:Name="HostTextBox" Text="localhost" Width="120"/>
+                <TextBlock Text="Port:" VerticalAlignment="Center" Margin="10,0,5,0"/>
+                <TextBox x:Name="PortTextBox" Text="8080" Width="60"/>
+                <Button x:Name="ConnectButton" Content="Connect" Click="ConnectButton_Click" Margin="10,0,0,0"/>
+                <Button x:Name="DisconnectButton" Content="Disconnect" Click="DisconnectButton_Click" IsEnabled="False"/>
+                <Ellipse x:Name="StatusIndicator" Width="12" Height="12" Fill="Red" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="StatusText" Text="Disconnected" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Command Builder -->
+        <Border Grid.Row="1" Background="#F8F8F8" CornerRadius="4" Padding="10" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Command Type -->
+                <TextBlock Text="Command:" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                <ComboBox x:Name="CommandTypeComboBox" Grid.Column="1" SelectionChanged="CommandTypeComboBox_SelectionChanged">
+                    <ComboBoxItem Content="add_component" IsSelected="True"/>
+                    <ComboBoxItem Content="connect_components"/>
+                    <ComboBoxItem Content="get_all_components"/>
+                    <ComboBoxItem Content="get_component_info"/>
+                    <ComboBoxItem Content="get_connections"/>
+                    <ComboBoxItem Content="get_document_info"/>
+                    <ComboBoxItem Content="clear_document"/>
+                    <ComboBoxItem Content="save_document"/>
+                    <ComboBoxItem Content="load_document"/>
+                    <ComboBoxItem Content="search_components"/>
+                    <ComboBoxItem Content="get_component_parameters"/>
+                    <ComboBoxItem Content="validate_connection"/>
+                    <ComboBoxItem Content="create_pattern"/>
+                    <ComboBoxItem Content="get_available_patterns"/>
+                    <!-- Script Component Commands -->
+                    <ComboBoxItem Content="get_script_components"/>
+                    <ComboBoxItem Content="get_script_code"/>
+                    <ComboBoxItem Content="set_script_code"/>
+                    <ComboBoxItem Content="compile_script"/>
+                    <ComboBoxItem Content="investigate_script_component"/>
+                    <ComboBoxItem Content="test_script_compilation"/>
+                </ComboBox>
+                <Button x:Name="SendButton" Grid.Column="2" Content="Send" Click="SendButton_Click" Width="80"/>
+
+                <!-- Dynamic Parameters -->
+                <StackPanel x:Name="ParametersPanel" Grid.Row="1" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,10,0,0">
+                    <!-- Parameters will be added dynamically -->
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Request/Response Split View -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Request Panel -->
+            <Border Background="#2D2D30" CornerRadius="4" Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Request JSON" Foreground="White" FontWeight="Bold" Margin="5"/>
+                    <TextBox x:Name="RequestTextBox" Grid.Row="1"
+                             Background="#1E1E1E" Foreground="#DCDCDC"
+                             FontFamily="Consolas" FontSize="12"
+                             AcceptsReturn="True" AcceptsTab="True"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" Background="Transparent"/>
+
+            <!-- Response Panel -->
+            <Border Grid.Column="2" Background="#2D2D30" CornerRadius="4" Padding="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Response JSON" Foreground="White" FontWeight="Bold" Margin="5"/>
+                        <TextBlock x:Name="ResponseStatus" Foreground="Gray" Margin="10,5,5,5"/>
+                    </StackPanel>
+                    <TextBox x:Name="ResponseTextBox" Grid.Row="1"
+                             Background="#1E1E1E" Foreground="#DCDCDC"
+                             FontFamily="Consolas" FontSize="12"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- History Bar -->
+        <Border Grid.Row="3" Background="#F0F0F0" CornerRadius="4" Padding="5" Margin="0,10,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="History:" VerticalAlignment="Center" Margin="5,0"/>
+                <ComboBox x:Name="HistoryComboBox" Grid.Column="1" SelectionChanged="HistoryComboBox_SelectionChanged"/>
+                <Button Grid.Column="2" Content="Clear History" Click="ClearHistoryButton_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -37,7 +37,7 @@ namespace GH_MCP.Utils
         /// <param name="component">The C# script component</param>
         /// <param name="errors">Output compilation errors if any</param>
         /// <returns>True if compilation succeeded</returns>
-        public static bool TryCompile(GH_Component component, out List<string> errors)
+        public static bool TryCompile(object component, out List<string> errors)
         {
             errors = new List<string>();
 
@@ -148,7 +148,7 @@ namespace GH_MCP.Utils
         ///     }
         /// }
         /// </example>
-        public static bool SetScriptText(GH_Component component, string scriptText)
+        public static bool SetScriptText(object component, string scriptText)
         {
             // Fallback to reflection for now
             return CSharpScriptCompiler_OptionA.SetScriptText(component, scriptText);
@@ -173,7 +173,7 @@ namespace GH_MCP.Utils
         ///     }
         /// }
         /// </example>
-        public static string GetScriptText(GH_Component component)
+        public static string GetScriptText(object component)
         {
             // Fallback to reflection for now
             return CSharpScriptCompiler_OptionA.GetScriptText(component);

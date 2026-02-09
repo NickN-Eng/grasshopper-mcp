@@ -59,8 +59,8 @@ namespace GH_MCP.Utils
                 var relevantTypes = keywords.Length == 0
                     ? types
                     : types.Where(t => keywords.Any(kw =>
-                        t.Name.Contains(kw, StringComparison.OrdinalIgnoreCase) ||
-                        (t.Namespace?.Contains(kw, StringComparison.OrdinalIgnoreCase) ?? false)))
+                        ContainsIgnoreCase(t.Name, kw) ||
+                        (t.Namespace != null && ContainsIgnoreCase(t.Namespace, kw))))
                       .ToArray();
 
                 report.AppendLine($"Total Types: {types.Length}");
@@ -121,7 +121,7 @@ namespace GH_MCP.Utils
             var relevantProps = keywords.Length == 0
                 ? properties
                 : properties.Where(p => keywords.Any(kw =>
-                    p.Name.Contains(kw, StringComparison.OrdinalIgnoreCase)))
+                    ContainsIgnoreCase(p.Name, kw)))
                   .ToArray();
 
             if (relevantProps.Any())
@@ -142,7 +142,7 @@ namespace GH_MCP.Utils
             var relevantMethods = keywords.Length == 0
                 ? methods.Where(m => !m.IsSpecialName) // Exclude property getters/setters
                 : methods.Where(m => !m.IsSpecialName && keywords.Any(kw =>
-                    m.Name.Contains(kw, StringComparison.OrdinalIgnoreCase)))
+                    ContainsIgnoreCase(m.Name, kw)))
                   .ToArray();
 
             if (relevantMethods.Any())
@@ -172,7 +172,7 @@ namespace GH_MCP.Utils
             // Find types with "Compile" methods
             var typesWithCompile = types
                 .Where(t => t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                    .Any(m => m.Name.Contains("Compile", StringComparison.OrdinalIgnoreCase)))
+                    .Any(m => ContainsIgnoreCase(m.Name, "Compile")))
                 .ToList();
 
             if (typesWithCompile.Any())
@@ -181,7 +181,7 @@ namespace GH_MCP.Utils
                 foreach (var type in typesWithCompile)
                 {
                     var compileMethods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                        .Where(m => m.Name.Contains("Compile", StringComparison.OrdinalIgnoreCase));
+                        .Where(m => ContainsIgnoreCase(m.Name, "Compile"));
                     report.AppendLine($"   - {type.FullName}");
                     foreach (var method in compileMethods)
                     {
@@ -194,7 +194,7 @@ namespace GH_MCP.Utils
 
             // Find types with "Context" in name
             var contextTypes = types
-                .Where(t => t.Name.Contains("Context", StringComparison.OrdinalIgnoreCase))
+                .Where(t => ContainsIgnoreCase(t.Name, "Context"))
                 .ToList();
 
             if (contextTypes.Any())
@@ -317,6 +317,14 @@ namespace GH_MCP.Utils
             }
 
             return report.ToString();
+        }
+
+        /// <summary>
+        /// Helper method for case-insensitive contains check (compatible with .NET Framework 4.8).
+        /// </summary>
+        private static bool ContainsIgnoreCase(string source, string value)
+        {
+            return source?.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0;
         }
     }
 }

@@ -12,8 +12,8 @@ namespace GH_MCP.Utils
     public static class CSharpScriptCompiler
     {
         private static readonly string LogPath = Path.Combine(
-            Path.GetDirectoryName(typeof(CSharpScriptCompiler).Assembly.Location),
-            "..", "..", "..", "..", "logs", "csharp-compilation.log");
+            GrasshopperMCP.GH_MCPInfo.GhaFolder,
+            "csharp-compilation.log");
 
         private static CompilationStrategy _lastSuccessfulStrategy = CompilationStrategy.Unknown;
 
@@ -34,7 +34,7 @@ namespace GH_MCP.Utils
         /// <param name="component">The C# script component to compile</param>
         /// <param name="errors">Output list of compilation errors</param>
         /// <returns>True if compilation succeeded</returns>
-        public static bool Compile(GH_Component component, out List<string> errors)
+        public static bool Compile(object component, out List<string> errors)
         {
             errors = new List<string>();
             var strategy = CompilationStrategy.Unknown;
@@ -90,7 +90,7 @@ namespace GH_MCP.Utils
         /// </summary>
         private static bool TryCompileWithStrategy(
             CompilationStrategy requestedStrategy,
-            GH_Component component,
+            object component,
             out List<string> errors,
             out CompilationStrategy usedStrategy)
         {
@@ -125,7 +125,7 @@ namespace GH_MCP.Utils
         /// <param name="component">The C# script component</param>
         /// <param name="scriptText">The new script text</param>
         /// <returns>True if the text was set successfully</returns>
-        public static bool SetScriptText(GH_Component component, string scriptText)
+        public static bool SetScriptText(object component, string scriptText)
         {
             try
             {
@@ -158,7 +158,7 @@ namespace GH_MCP.Utils
         /// </summary>
         /// <param name="component">The C# script component</param>
         /// <returns>The script text, or null if unable to retrieve</returns>
-        public static string GetScriptText(GH_Component component)
+        public static string GetScriptText(object component)
         {
             try
             {
@@ -195,7 +195,7 @@ namespace GH_MCP.Utils
         /// <param name="scriptText">The new script text</param>
         /// <param name="errors">Output compilation errors if any</param>
         /// <returns>True if both set and compile succeeded</returns>
-        public static bool SetAndCompile(GH_Component component, string scriptText, out List<string> errors)
+        public static bool SetAndCompile(object component, string scriptText, out List<string> errors)
         {
             errors = new List<string>();
 
@@ -216,13 +216,18 @@ namespace GH_MCP.Utils
         /// </summary>
         /// <param name="component">The C# script component to investigate</param>
         /// <returns>Investigation report as a string</returns>
-        public static string Investigate(GH_Component component)
+        public static string Investigate(object component)
         {
             try
             {
                 var investigator = new ReflectionInvestigator();
-                var report = investigator.InvestigateComponent(component);
-                Log($"Investigation completed for component: {component.Name}");
+                var ghComponent = component as IGH_DocumentObject;
+                if (ghComponent == null)
+                {
+                    return "Error: Component is not a valid Grasshopper object";
+                }
+                var report = investigator.InvestigateComponent(ghComponent);
+                Log($"Investigation completed for component: {ghComponent.Name}");
                 return report;
             }
             catch (Exception ex)
@@ -238,12 +243,22 @@ namespace GH_MCP.Utils
         /// </summary>
         /// <param name="component">The C# script component to test</param>
         /// <returns>Test results</returns>
-        public static CompilationTestResult TestCompilationMethods(GH_Component component)
+        public static CompilationTestResult TestCompilationMethods(object component)
         {
             try
             {
                 var investigator = new ReflectionInvestigator();
-                var result = investigator.TestCompilationMethods(component);
+                var ghComponent = component as IGH_DocumentObject;
+                if (ghComponent == null)
+                {
+                    return new CompilationTestResult
+                    {
+                        Success = false,
+                        ErrorMessage = "Component is not a valid Grasshopper object",
+                        Log = "Error: Invalid component type"
+                    };
+                }
+                var result = investigator.TestCompilationMethods(ghComponent);
                 Log($"Compilation method testing completed");
                 return result;
             }

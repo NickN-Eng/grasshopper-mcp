@@ -25,6 +25,8 @@ MANIFEST
 .vs/
 bin/
 obj/
+**/bin/
+**/obj/
 *.user
 *.userosscache
 *.suo
@@ -35,6 +37,20 @@ obj/
 *.pfx
 *.publishsettings
 orleans.codegen.cs
+*.VC.db
+*.VC.VC.opendb
+*.cache
+*.nupkg
+packages/
+*.snupkg
+*.pdb
+*.ilk
+*.tlog
+*.log
+*.DotSettings.user
+*.ncrunch*
+_NCrunch_*
+.nuget/
 
 # Rhino and Grasshopper
 *.rhi

@@ -5,7 +5,7 @@
 - [x] Tools migrated to C# bridge (add_component, connect_components, clear/load/save, get_* , create_pattern).
 - [x] Resources migrated to C# bridge (status, component_guide, component_library).
 - [x] Component name normalization + multi-input routing in C# (`GH_MCP.Client/ComponentNormalizer.cs`, `GrasshopperTools.ConnectComponents`).
-- [x] Test harness stack: `GH_MCP.Client`, console tester, WPF tester, `tests/commands`, `tests/McpTestRunner.cs`, `docs/ai-testing.md`.
+- [x] Test harness stack: `GH_MCP.Client`, console tester, WPF tester, `testing/tests/commands`, `testing/tests/McpTestRunner.cs`, `testing/docs/ai-testing.md`.
 
 ---
 
@@ -78,8 +78,8 @@
 - [x] Console tester with REPL.
 - [x] Batch/pipe mode for console tester.
 - [x] WPF tester app.
-- [x] Test command files (`tests/commands`).
-- [x] Documented AI testing workflow (`docs/ai-testing.md`).
+- [x] Test command files (`testing/tests/commands`).
+- [x] Documented AI testing workflow (`testing/docs/ai-testing.md`).
 
 ---
 

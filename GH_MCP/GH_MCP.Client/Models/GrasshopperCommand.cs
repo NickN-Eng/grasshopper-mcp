@@ -254,5 +254,68 @@ namespace GH_MCP.Client.Models
         }
 
         #endregion
+
+        #region Script Component Commands
+
+        /// <summary>
+        /// Creates a get_script_components command
+        /// Lists all C# script components in the active document
+        /// </summary>
+        public static GrasshopperCommand GetScriptComponents()
+        {
+            return new GrasshopperCommand("get_script_components");
+        }
+
+        /// <summary>
+        /// Creates a get_script_code command
+        /// Retrieves the source code from a script component
+        /// </summary>
+        public static GrasshopperCommand GetScriptCode(string componentId)
+        {
+            return new GrasshopperCommand("get_script_code", new Dictionary<string, object?>
+            {
+                ["component_id"] = componentId
+            });
+        }
+
+        /// <summary>
+        /// Creates a set_script_code command
+        /// Sets new source code on a script component and optionally compiles it
+        /// </summary>
+        public static GrasshopperCommand SetScriptCode(string componentId, string code, bool compile = false)
+        {
+            return new GrasshopperCommand("set_script_code", new Dictionary<string, object?>
+            {
+                ["component_id"] = componentId,
+                ["code"] = code,
+                ["compile"] = compile
+            });
+        }
+
+        /// <summary>
+        /// Creates a compile_script command
+        /// Triggers compilation of a script component
+        /// </summary>
+        public static GrasshopperCommand CompileScript(string componentId)
+        {
+            return new GrasshopperCommand("compile_script", new Dictionary<string, object?>
+            {
+                ["component_id"] = componentId
+            });
+        }
+
+        /// <summary>
+        /// Creates a test_script_compilation command
+        /// Comprehensive testing and investigation of script compilation
+        /// </summary>
+        public static GrasshopperCommand TestScriptCompilation(string componentId)
+        {
+            return new GrasshopperCommand("test_script_compilation", new Dictionary<string, object?>
+            {
+                ["component_id"] = componentId
+            });
+        }
+
+        #endregion
     }
 }
